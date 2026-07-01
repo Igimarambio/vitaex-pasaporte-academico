@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VitaeX - Pasaporte Académico Universidad Adolfo Ibáñez</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0b0e14;
+    --surface: #151a23;
+    --surface-2: #1d242f;
+    --border: #2a323f;
+    --text: #e6e9ef;
+    --muted: #9aa4b2;
+    --gold: #f0b429;
+    --blue: #3aa0ff;
+    --green: #2dd4a8;
+    --danger: #ff6b6b;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Inter", system-ui, sans-serif; line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--blue); }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13, 17, 23, 0.6);
+    position: sticky; top: 0; z-index: 10; backdrop-filter: blur(8px);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand h1 {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 18px; font-weight: 700; margin: 0; letter-spacing: -0.01em;
+  }
+  .brand small { display: block; color: var(--muted); font-size: 12px; font-weight: 400; }
+
+  .conexion { display: flex; align-items: center; gap: 10px; }
+  .chip {
+    font-size: 12px; padding: 5px 10px; border-radius: 999px;
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .chip.owner { color: var(--gold); border-color: rgba(240,180,41,0.4); }
+
+  main { max-width: 980px; margin: 0 auto; padding: 28px 24px 64px; }
+
+  /* Pantallas */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* Gate (conexión) */
+  .gate {
+    max-width: 460px; margin: 7vh auto 0; text-align: center;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 44px 34px;
+  }
+  .gate h2 { font-family: "Space Grotesk", sans-serif; font-size: 22px; margin: 20px 0 10px; }
+  .gate p { color: var(--muted); font-size: 14px; margin: 0 auto 26px; max-width: 380px; }
+  .gate-note { font-size: 12px !important; margin-top: 18px !important; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .card h2 {
+    font-family: "Space Grotesk", sans-serif; font-size: 15px; font-weight: 600;
+    margin: 0 0 4px; display: flex; align-items: center; gap: 8px;
+  }
+  .card .hint { color: var(--muted); font-size: 12.5px; margin: 0 0 16px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  label { display: block; font-size: 12px; color: var(--muted); margin: 12px 0 5px; }
+  input, select {
+    width: 100%; padding: 10px 12px; font-size: 14px; font-family: inherit;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 9px; outline: none;
+  }
+  input:focus, select:focus { border-color: var(--blue); }
+  input:read-only { color: var(--muted); background: var(--surface-2); cursor: not-allowed; }
+
+  button {
+    font-family: inherit; font-size: 13.5px; font-weight: 600;
+    padding: 10px 16px; border-radius: 9px; border: 1px solid transparent;
+    cursor: pointer; transition: filter .15s, opacity .15s;
+  }
+  button:hover { filter: brightness(1.08); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-primary { background: var(--blue); color: #04121f; width: 100%; margin-top: 16px; }
+  .btn-ghost { background: var(--surface-2); color: var(--text); border-color: var(--border); }
+  .btn-danger { background: transparent; color: var(--danger); border-color: rgba(255,107,107,0.4); width: 100%; margin-top: 16px; }
+
+  .kv { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+  .kv:last-child { border-bottom: 0; }
+  .kv span:first-child { color: var(--muted); }
+  .kv span:last-child { font-variant-numeric: tabular-nums; word-break: break-all; text-align: right; }
+
+  .badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-top: 14px; }
+  .badge { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .badge img { width: 100%; display: block; aspect-ratio: 1; background: #0d1117; }
+  .badge .meta { padding: 12px 14px; }
+  .badge .meta .id { font-size: 11px; color: var(--muted); }
+  .badge .meta .titulo { font-size: 13.5px; font-weight: 600; margin: 2px 0 0; }
+  .vacio { color: var(--muted); font-size: 13.5px; margin-top: 14px; }
+  .nombre-alumno { grid-column: 1 / -1; font-family: "Space Grotesk", sans-serif; font-size: 16px; font-weight: 600; margin: 6px 0 0; }
+
+  #status { min-height: 20px; margin: 0 0 20px; font-size: 13.5px; color: var(--muted); }
+  #status.ok { color: var(--green); }
+  #status.err { color: var(--danger); }
+  #status.work { color: var(--blue); }
+
+  .full { grid-column: 1 / -1; }
+  .lock { color: var(--gold); font-size: 11.5px; }
+  .stack > .card + .card { margin-top: 18px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 56 56" aria-hidden="true">
+      <polygon points="28,4 50,16 50,40 28,52 6,40 6,16" fill="none" stroke="var(--gold)" stroke-width="3"/>
+      <polygon points="28,14 41,21.5 41,34.5 28,42 15,34.5 15,21.5" fill="rgba(240,180,41,0.12)"/>
+    </svg>
+    <div>
+      <h1>VitaeX - Pasaporte Académico Universidad Adolfo Ibáñez</h1>
+        <small>Verificar logros académicos - Sepolia</small>
+        <small>Proyecto Blockchain - Grupo 9: Tomás Sánchez, Ignacia Marambio, Diego Kusanovic y Claudia Herrera</small>
+    </div>
+  </div>
+  <div class="conexion">
+    <span id="cuentaChip" class="chip" style="display:none"></span>
+    <button id="btnSalir" class="btn-ghost" style="display:none">Salir</button>
+  </div>
+</header>
+
+<main>
+  <p id="status"></p>
+
+  <!-- PANTALLA 1: Conexión -->
+  <div id="screenGate" class="screen active">
+    <div class="gate">
+      <svg width="64" height="64" viewBox="0 0 56 56" aria-hidden="true">
+        <polygon points="28,4 50,16 50,40 28,52 6,40 6,16" fill="none" stroke="var(--gold)" stroke-width="3"/>
+        <polygon points="28,14 41,21.5 41,34.5 28,42 15,34.5 15,21.5" fill="rgba(240,180,41,0.12)"/>
+      </svg>
+      <h2>Conecta tu wallet</h2>
+      <p>Si eres la institución Universidad Adolfo Ibáñez podrás emitir y revocar credenciales. Si no, podrás verificar tus logros y los de cualquier dirección.</p>
+      <button id="btnConectar" class="btn-primary">Conectar MetaMask</button>
+      <p class="hint gate-note">Necesitas MetaMask con la red Sepolia.</p>
+    </div>
+  </div>
+
+  <!-- PANTALLA 2: Institución (owner) -->
+  <div id="screenOwner" class="screen">
+    <div class="grid">
+      <section class="card">
+        <h2><span class="dot" style="background:var(--green)"></span> Estado del contrato</h2>
+        <p class="hint">Datos públicos, cualquiera puede consultarlos.</p>
+        <div class="kv"><span>Dirección</span><span id="ctAddr">—</span></div>
+        <div class="kv"><span>Institución (owner)</span><span id="ctOwner">—</span></div>
+        <div class="kv"><span>Total emitidos</span><span id="ctTotal">—</span></div>
+        <button id="btnEstado" class="btn-ghost" style="margin-top:16px; width:100%">Actualizar</button>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot" style="background:var(--gold)"></span> Emitir logro</h2>
+        <p class="hint">Crea una credencial soulbound para un estudiante.</p>
+        <label>Wallet del estudiante</label>
+        <input id="emEstudiante" placeholder="0x..." />
+        <label>Nombre del estudiante</label>
+        <input id="emNombre" placeholder="Juan Pérez" />
+        <label>Tipo de logro</label>
+        <select id="emTipo">
+          <option>Titulo</option>
+          <option>Curso</option>
+          <option>Ayudantia</option>
+        </select>
+        <label>Descripción</label>
+        <input id="emTitulo" placeholder="Ingenieria Civil en Informatica" />
+        <button id="btnEmitir" class="btn-primary">Emitir logro</button>
+      </section>
+
+      <section class="card full">
+        <h2><span class="dot" style="background:var(--blue)"></span> Ver pasaporte</h2>
+        <p class="hint">Ingresa una dirección para ver sus logros activos.</p>
+        <label>Wallet del estudiante</label>
+        <input id="vpAddr" placeholder="0x..." />
+        <button id="btnVer" class="btn-primary">Ver logros</button>
+        <div id="badges" class="badges"></div>
+      </section>
+
+      <section class="card full">
+        <h2><span class="dot" style="background:var(--danger)"></span> Revocar logro</h2>
+        <p class="hint">Quema un logro mal emitido (deja de ser válido).</p>
+        <label>ID del logro</label>
+        <input id="rvId" placeholder="0" inputmode="numeric" />
+        <button id="btnRevocar" class="btn-danger">Revocar logro</button>
+      </section>
+    </div>
+  </div>
+
+  <!-- PANTALLA 3: Verificador / estudiante -->
+  <div id="screenVerifier" class="screen">
+    <div class="stack">
+      <section class="card">
+        <h2><span class="dot" style="background:var(--gold)"></span> Tus logros</h2>
+        <p class="hint">Estas son las credenciales emitidas a tu wallet conectada.</p>
+        <div id="misBadges" class="badges"></div>
+        <button id="btnRefrescar" class="btn-ghost" style="width:100%; margin-top:16px">Actualizar</button>
+      </section>
+
+      <section class="card">
+        <h2><span class="dot" style="background:var(--blue)"></span> Verificar otra dirección</h2>
+        <p class="hint">Cualquiera puede comprobar los logros de una wallet.</p>
+        <label>Wallet</label>
+        <input id="vfAddr" placeholder="0x..." />
+        <button id="btnVerificar" class="btn-primary">Verificar</button>
+        <div id="vfBadges" class="badges"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.4/+esm";
+
+
+const CONTRACT_ADDRESS = "0xc1092A2fED2e846CF52ed3d6038d12A8C0F95684";
+
+const SEPOLIA_HEX = "0xaa36a7";   // chainId 11155111
+const SEPOLIA_ID  = 11155111n;
+
+const ABI = [
+  "function owner() view returns (address)",
+  "function totalEmitidos() view returns (uint256)",
+  "function tokensDe(address) view returns (uint256[])",
+  "function logros(uint256) view returns (string tipo, string titulo, uint256 fecha, address emisor)",
+  "function tokenURI(uint256) view returns (string)",
+  "function nombreEstudiante(address) view returns (string)",
+  "function emitirLogro(address,string,string,string) returns (uint256)",
+  "function revocarLogro(uint256)"
+];
+
+let provider, signer, contract, cuenta, esOwner = false;
+
+const $ = (id) => document.getElementById(id);
+const corto = (a) => a ? a.slice(0, 6) + "…" + a.slice(-4) : "—";
+
+function estado(msg, tipo = "") { const el = $("status"); el.textContent = msg; el.className = tipo; }
+function errorLegible(e) { return e?.reason || e?.shortMessage || e?.info?.error?.message || e?.message || "Error desconocido"; }
+function mostrarPantalla(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+
+// ---- Conexión ----
+$("btnConectar").addEventListener("click", conectar);
+$("btnSalir").addEventListener("click", () => location.reload());
+
+async function conectar() {
+  if (!window.ethereum) { estado("No se detectó MetaMask. Instálalo para continuar.", "err"); return; }
+  try {
+    estado("Conectando…", "work");
+    provider = new ethers.BrowserProvider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+
+    let net = await provider.getNetwork();
+    if (net.chainId !== SEPOLIA_ID) {
+      try {
+        await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: SEPOLIA_HEX }] });
+        provider = new ethers.BrowserProvider(window.ethereum);
+      } catch { estado("Cambia la red a Sepolia en MetaMask y reconecta.", "err"); return; }
+    }
+
+    signer = await provider.getSigner();
+    cuenta = await signer.getAddress();
+    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+
+    const dueno = await contract.owner();
+    esOwner = dueno.toLowerCase() === cuenta.toLowerCase();
+
+    $("cuentaChip").style.display = "inline-block";
+    $("cuentaChip").textContent = corto(cuenta);
+    $("cuentaChip").classList.toggle("owner", esOwner);
+    $("btnSalir").style.display = "inline-block";
+
+    if (esOwner) {
+      mostrarPantalla("screenOwner");
+      await cargarEstado();
+      estado("Conectado como institución Universidad Adolfo Ibáñez. Puedes emitir y revocar.", "ok");
+    } else {
+      mostrarPantalla("screenVerifier");
+      estado("Conectado como verificador. Puedes consultar logros.", "ok");
+      await cargarMisLogros();
+    }
+  } catch (e) { estado(errorLegible(e), "err"); }
+}
+
+// Reaccionar a cambios de cuenta o red
+if (window.ethereum) {
+  window.ethereum.on?.("accountsChanged", () => location.reload());
+  window.ethereum.on?.("chainChanged", () => location.reload());
+}
+
+// ---- Render de pasaporte (reutilizable) ----
+async function pintarPasaporte(addr, contId) {
+  const cont = $(contId);
+  cont.innerHTML = "";
+  const ids = await contract.tokensDe(addr);
+  if (ids.length === 0) {
+    cont.innerHTML = '<p class="vacio">No hay logros activos para esta dirección.</p>';
+    return 0;
+  }
+  let nombre = "";
+  try { nombre = await contract.nombreEstudiante(addr); } catch {}
+  if (nombre) {
+    const h = document.createElement("p");
+    h.className = "nombre-alumno";
+    h.textContent = nombre;
+    cont.appendChild(h);
+  }
+  for (const id of ids) {
+    const [datos, uri] = await Promise.all([contract.logros(id), contract.tokenURI(id)]);
+    const meta = decodificarURI(uri);
+    const div = document.createElement("div");
+    div.className = "badge";
+    div.innerHTML =
+      '<img src="' + meta.image + '" alt="Insignia de ' + escapar(datos.tipo) + '" />' +
+      '<div class="meta"><div class="id">#' + id.toString() + ' · ' + escapar(datos.tipo) + '</div>' +
+      '<p class="titulo">' + escapar(datos.titulo) + '</p></div>';
+    cont.appendChild(div);
+  }
+  return ids.length;
+}
+
+function decodificarURI(uri) {
+  const b64 = uri.split("base64,")[1];
+  const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  return JSON.parse(new TextDecoder("utf-8").decode(bytes));
+}
+function escapar(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+// ---- Estado (owner) ----
+$("btnEstado").addEventListener("click", cargarEstado);
+async function cargarEstado() {
+  if (!contract) return;
+  try {
+    $("ctAddr").textContent = corto(CONTRACT_ADDRESS);
+    const [dueno, total] = await Promise.all([contract.owner(), contract.totalEmitidos()]);
+    $("ctOwner").textContent = corto(dueno);
+    $("ctTotal").textContent = total.toString();
+  } catch (e) { estado(errorLegible(e), "err"); }
+}
+
+// ---- Emitir (owner) ----
+// Si la wallet ya está asociada a una persona, rellena y bloquea el campo nombre
+$("emEstudiante").addEventListener("blur", async () => {
+  const addr = $("emEstudiante").value.trim();
+  const campo = $("emNombre");
+  if (!contract || !ethers.isAddress(addr)) { campo.readOnly = false; return; }
+  try {
+    const nombre = await contract.nombreEstudiante(addr);
+    if (nombre) {
+      campo.value = nombre;
+      campo.readOnly = true;
+      estado("Esta wallet ya está asociada a " + nombre + ". El nombre no se puede cambiar.", "");
+    } else {
+      campo.value = "";
+      campo.readOnly = false;
+    }
+  } catch {}
+});
+
+$("btnEmitir").addEventListener("click", async () => {
+  const estudiante = $("emEstudiante").value.trim();
+  const nombre = $("emNombre").value.trim();
+  const tipo = $("emTipo").value;
+  const titulo = $("emTitulo").value.trim();
+  if (!ethers.isAddress(estudiante)) { estado("Dirección de estudiante inválida.", "err"); return; }
+  if (!titulo) { estado("Escribe una descripción para el logro.", "err"); return; }
+  try {
+    estado("Emitiendo logro… confirma en MetaMask.", "work");
+    const tx = await contract.emitirLogro(estudiante, nombre, tipo, titulo);
+    await tx.wait();
+    estado("Logro emitido correctamente.", "ok");
+    $("emTitulo").value = "";
+    await cargarEstado();
+  } catch (e) { estado(errorLegible(e), "err"); }
+});
+
+// ---- Ver pasaporte (owner) ----
+$("btnVer").addEventListener("click", async () => {
+  const addr = $("vpAddr").value.trim();
+  if (!ethers.isAddress(addr)) { estado("Dirección inválida.", "err"); return; }
+  try {
+    estado("Cargando pasaporte…", "work");
+    const n = await pintarPasaporte(addr, "badges");
+    estado(n ? n + " logro(s) activo(s) encontrados." : "Sin logros activos.", "ok");
+  } catch (e) { estado(errorLegible(e), "err"); }
+});
+
+// ---- Revocar (owner) ----
+$("btnRevocar").addEventListener("click", async () => {
+  const id = $("rvId").value.trim();
+  if (id === "") { estado("Indica el ID del logro.", "err"); return; }
+  try {
+    estado("Revocando logro… confirma en MetaMask.", "work");
+    const tx = await contract.revocarLogro(id);
+    await tx.wait();
+    estado("Logro #" + id + " revocado.", "ok");
+    await cargarEstado();
+  } catch (e) { estado(errorLegible(e), "err"); }
+});
+
+// ---- Verificador ----
+async function cargarMisLogros() {
+  try {
+    estado("Cargando tus logros…", "work");
+    const n = await pintarPasaporte(cuenta, "misBadges");
+    estado(n ? "Tienes " + n + " logro(s) activo(s)." : "Aún no tienes logros emitidos.", "ok");
+  } catch (e) { estado(errorLegible(e), "err"); }
+}
+$("btnRefrescar").addEventListener("click", cargarMisLogros);
+
+$("btnVerificar").addEventListener("click", async () => {
+  const addr = $("vfAddr").value.trim();
+  if (!ethers.isAddress(addr)) { estado("Dirección inválida.", "err"); return; }
+  try {
+    estado("Verificando…", "work");
+    const n = await pintarPasaporte(addr, "vfBadges");
+    estado(n ? n + " logro(s) activo(s) en esa dirección." : "Esa dirección no tiene logros activos.", "ok");
+  } catch (e) { estado(errorLegible(e), "err"); }
+});
+</script>
+</body>
+</html>
