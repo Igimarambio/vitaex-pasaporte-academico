@@ -1,8 +1,8 @@
 # VitaeX - Pasaporte Académico UAI en Blockchain - Grupo 9
 
-## Integrantes: Ignacia Marambio, Diego Kusanovic, Tomás Sánchez y Claudia Herrera 
+Integrantes: Ignacia Marambio, Diego Kusanovic, Tomás Sánchez y Claudia Herrera 
 
-## Dirección contrato desplegado: 0xc1092A2fED2e846CF52ed3d6038d12A8C0F95684
+Dirección contrato desplegado: 0xc1092A2fED2e846CF52ed3d6038d12A8C0F95684
 
 ## Descripción
 
